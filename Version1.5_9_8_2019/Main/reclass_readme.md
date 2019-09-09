@@ -53,7 +53,8 @@
 ## Reclass form submission handling & DB insert.
 
 * When a reclass form is submitted, a POST request is made to `@application.route('/reclass',methods = ['POST'])`
-* Value of the form is parsed into a list of `[text,class]`
+* Value of the form is parsed into a list of `[text,class]`.
+
        ~~~~
        reclass_parsed = []
        for key in reclass_input:
@@ -65,7 +66,7 @@
 
 * DB Connection is made using `mysql.connector.connect(**config)`
 * Database and table initialized/created using MYSQL Workbench
-* Insert items into the table using function `enter_items()`
+* Insert items into the table using function `enter_items()`.
       ~~~~
       reclassed_items ="""INSERT INTO reclassed (dateinput, text, class)
                          VALUES
