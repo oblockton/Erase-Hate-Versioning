@@ -67,11 +67,11 @@
 * DB Connection is made using `mysql.connector.connect(**config)`
 * Database and table initialized/created using MYSQL Workbench
 * Insert items into the table using function `enter_items()`.
-      ~~~~
-      reclassed_items ="""INSERT INTO reclassed (dateinput, text, class)
+
+    `  reclassed_items ="""INSERT INTO reclassed (dateinput, text, class)
                          VALUES
                          (%s,%s,%s)"""
-      cursor.execute(reclassed_items,(insert_date,item[1],int(item[0])))
-      ~~~~
+      cursor.execute(reclassed_items,(insert_date,item[1],int(item[0])))`
+      
 
 * On successful entry into DB, user is redirected back to homepage/index `/`. On error user directed to support page.
