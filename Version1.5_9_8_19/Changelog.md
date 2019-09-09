@@ -30,28 +30,3 @@
   * Classify text, tweet user timeline, tweet keyword/topic search results.
   * Provide total items classed, counts for each applicable class, and percentage of total items.
   * Lock tweepy search use on any tweepy error not related to search results. Basic catchall for rate limit errors.
-
-
-
-
-
-
-
-differences
-
-model Server
- return the prediction array from LSTM_model
-
- front end
-
- add switching for multi api keys-
-   create a new version of tweepy that combines tweepy 3.8 with the python2.7 tweepy forked version from mention_regex
-   add this to requirements. the module is a in a repo called tweepy_fix on my github.
-
-  add ability to reclass items
-
-  item submitted to db.
-  db periodically checks for new reclassed items.
-
-  if there are it votes a final class determination.
-   save the final classes to a new table.
