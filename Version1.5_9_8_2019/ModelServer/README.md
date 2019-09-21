@@ -1,5 +1,8 @@
-# Please use the "development" branch to push your work!
+# - ModelServer <---folder
+    - contains the files necessary for serving ONLY the LSTM model.
 
-## In the event that you don't have your API keys, you'll find credentials provided in the "Notebook Examples."
+### application.py  
+    - Main FLask/WSGI file file. All functions to serve predictions, respond to requests, and Flask routes/views reside There
 
-### Scope of Work can be found [here](https://docs.google.com/document/d/1H4sKoo_S_lITEG_mdsILKSM09oxS3vMalHmTXF_535I/edit?usp=sharing).
+### utils.py
+    - Contains runner functions used to clean/parse text input. Some of these functions are used in/by certain vectorizers. The method of pickling requires these functions to be stored externally( with an accompanying init.py). 

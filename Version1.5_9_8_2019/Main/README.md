@@ -1,5 +1,15 @@
-# Please use the "development" branch to push your work!
+# Main <--folder
+    - contains all files for front end, twiiter handling, & LogRegress Model predictions
 
-## In the event that you don't have your API keys, you'll find credentials provided in the "Notebook Examples."
 
-### Scope of Work can be found [here](https://docs.google.com/document/d/1H4sKoo_S_lITEG_mdsILKSM09oxS3vMalHmTXF_535I/edit?usp=sharing).
+### .ebextensions
+    - Custom config instructions for AWS deployment
+
+### Application.py
+    - Contains the core front end code. All routes/views resides There
+
+### model.py
+    - Contains code for the Log Regress model prediction.
+
+### utils.py
+    - Runner functions used to clean & parse input for prediction. Some of these functions are used in/by the TFIDF vectorizer & POS tag vectorizer. The method of pickling requires these functions to be stored externally( with an accompanying init.py). 

@@ -8,17 +8,17 @@ Erase Hate repo for versions. Contains complete architecture.
 - Version_M_DD_YYYY
   - Main <--folder
       - contains all files for front end, twiiter handling, & LogRegress Model predictions
-      - app.py for for front end here.
-  -ModelServer <---folder
+      - app.py for for front end is in Main.
+  - ModelServer <---folder
       - contains the files necessary for serving ONLY the LSTM model.
-      - model serving application.py resides here.
+      - model serving application.py resides in ModelServer.
            -application.py filename required for AWS ---> route will then require @application.route,
            * Also requires.
            application = Flask('__name__')
            if __name__ == '__main__':
             application.run()
 
-            * file will run locally with the change to' application' instead of 'app'.
+            * file will run locally with the change to' application' decorator instead of 'app'.
 
 # Running 2 servers/Flask apps locally.
 
