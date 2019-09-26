@@ -20,14 +20,14 @@ update_key = joblib.load('update_key.pkl')
 ~~~~
 
 >  In function `there_r_newitems()` we check the update key.
-    ~~~~
-    if update_key == 'updated':
-          print('******* Yes there are new items *******')
-          return True
-      else:
-          print('***** There are no new items *******')
-          return False
-    ~~~~
+~~~~
+if update_key == 'updated':
+      print('******* Yes there are new items *******')
+      return True
+  else:
+      print('***** There are no new items *******')
+      return False
+~~~~
 
 * If new items do exist. Query the database for all items. Locate any items with total of 3 votes, store those items as variable `voted_items`. Then retrain if at least 10 items have at least 3 votes each.
     > If there_r_newitems() returned True. Determine which items meet the threshold.
