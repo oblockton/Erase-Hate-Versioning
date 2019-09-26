@@ -9,9 +9,9 @@
   * Files affected - `ModelServer/application.py`, files added - `Vote_Retrain/retrain.py`
 
   * **Details/README's**
-    * Retrain script overview | `retrain_README.md` [link](https://github.com/oblockton/Erase-Hate-Versioning/blob/master/Version2_9_26_2019/Vote_Retrain/retrain_readme.md 'Retraining Script README')
+    * Retrain script overview | `retrain_README.md` [link](https://github.com/oblockton/Erase-Hate-Versioning/blob/master/Version2_9_26_2019/Vote_Retrain/retrain_README.md 'Retraining Script README')
 
-    * Model Server changes | `Changelog.md` [link](https://github.com/oblockton/Erase-Hate-Versioning/blob/master/Version2_9_26_2019/ModelServer/changelog.md 'ModelServer Changelog')
+    * Model Server changes | `Changelog.md` [link](https://github.com/oblockton/Erase-Hate-Versioning/blob/master/Version2_9_26_2019/ModelServer/Changelog.md 'ModelServer Changelog')
 
 ## V1.5
 #### Add feature - Reclassification
