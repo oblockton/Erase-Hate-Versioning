@@ -6,10 +6,10 @@ Erase Hate repo for versions. Contains complete architecture.
 ## Structure & Folder Heirarchy
 
 - Version_M_DD_YYYY
-  - Main <--folder
+  - Main <--- folder
       - contains all files for front end, twiiter handling, & LogRegress Model predictions
       - app.py for for front end is in Main.
-  - ModelServer <---folder
+  - ModelServer <--- folder
       - contains the files necessary for serving ONLY the LSTM model.
       - model serving application.py resides in ModelServer.
            -application.py filename required for AWS ---> route will then require @application.route,
@@ -19,6 +19,8 @@ Erase Hate repo for versions. Contains complete architecture.
             application.run()
 
             * file will run locally with the change to' application' decorator instead of 'app'.
+  - Vote_Retrain <--- folder
+      - contains all files for voting on user classified items, and retraining of the LSTM model, including AWS uploading.
 
 # Running 2 servers/Flask apps locally.
 

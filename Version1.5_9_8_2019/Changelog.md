@@ -8,7 +8,7 @@
   * Python voting script added to assign the final class for use in retraining.
   * **Details/README's**
     * Front-End changes in Application.py | Main/reclass_readme.md [link](https://github.com/oblockton/Erase-Hate-Versioning/blob/master/Version1.5_9_8_2019/Main/reclass_readme.md 'Reclass Submit README')
-    * Voting in reclass_voting.py | Vote_Retrain/voting_README.md [link] (https://github.com/oblockton/Erase-Hate-Versioning/blob/master/Version1.5_9_8_2019/Vote_Retrain/voting_README.md 'Voting Script README')
+    * Voting in reclass_voting.py | Vote_Retrain/voting_README.md [link](https://github.com/oblockton/Erase-Hate-Versioning/blob/master/Version1.5_9_8_2019/Vote_Retrain/voting_README.md 'Voting Script README')
 
 #### Add feature - Multi-Auth/API switching.
   * Add ability to switch tweepy AUTH Handler as ratelimit approaches.
