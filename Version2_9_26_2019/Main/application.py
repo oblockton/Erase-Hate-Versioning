@@ -1,6 +1,6 @@
 import os
 from flask import Flask,render_template,redirect,request,jsonify,url_for
-import tweepy
+import tweepymashup
 from model import logregress_linsvc
 import requests
 import json
@@ -38,13 +38,13 @@ oauth_keys = [
 
 auths = []
 for consumer_key,consumer_secret,access_token,access_token_secret in oauth_keys:
-    auth = tweepy.OAuthHandler(consumer_key,consumer_secret)
+    auth = tweepymashup.OAuthHandler(consumer_key,consumer_secret)
     auth.set_access_token(access_token,access_token_secret)
     auths.append(auth)
 
 
 global api
-api = tweepy.API(auths, monitor_rate_limit=True, wait_on_rate_limit=True)
+api = tweepymashup.API(auths, monitor_rate_limit=True, wait_on_rate_limit=True)
 
 
 ########################################################################
@@ -56,7 +56,7 @@ api = tweepy.API(auths, monitor_rate_limit=True, wait_on_rate_limit=True)
 #Query for pulling tweets containing a keyword'''
 def api_topic(api,topic):
     tweet_dict = {'dates':[],'text':[]}
-    for tweet in tweepy.Cursor(api.search,q=topic, tweet_mode='extended',lang="en").items(300):
+    for tweet in tweepymashup.Cursor(api.search,q=topic, tweet_mode='extended',lang="en").items(300):
         if 'RT @' not in tweet.full_text:
             tweet_dict['dates'].append((tweet.created_at).strftime('%m-%d-%Y'))
             tweet_dict['text'].append(tweet.full_text)
@@ -66,7 +66,7 @@ def api_topic(api,topic):
 #Query for pulling tweets only from a single useer timelime specified as the input, when form choice is 'user' '''
 def api_user(api,user):
     user_posts = {'dates':[],'text':[]}
-    for post in tweepy.Cursor(api.user_timeline, screen_name=user, tweet_mode='extended',lang="en").items(300):
+    for post in tweepymashup.Cursor(api.user_timeline, screen_name=user, tweet_mode='extended',lang="en").items(300):
         user_posts['dates'].append((post.created_at).strftime('%m-%d-%Y'))
         user_posts['text'].append(post.full_text)
     return user_posts
@@ -276,7 +276,7 @@ def predict():
                             hate_count=results['hate_data']['count'],hate_percent=results['hate_data']['percentTotal'],
                             hurt_count=results['hurt_data']['count'],hurt_percent=results['hurt_data']['percentTotal'],
                             neither_count=results['neither_data']['count'],neither_percent=results['neither_data']['percentTotal'])
-                        except tweepy.TweepError as e:
+                        except tweepymashup.TweepError as e:
                             print(e)
                             if str(e)[-3:]== '404':
                                 # Search inputs that dont return a user will throw a TWITTER 404,
@@ -326,7 +326,7 @@ def predict():
                                 print("!!!! ModelServ Error verbose: " + str(e))
                                 print("!!!! ModelServ *server Err fired from try/except - TOPIC - state:UNLOCKING !!!!")
                                 return render_template('support.html', error = 'Model Serving Error')
-                        except tweepy.TweepError as e:
+                        except tweepymashup.TweepError as e:
                             print(e)
                             if str(e)[-3:]== '404':
                                 # Search inputs that dont return a user will throw a TWITTER 404,
@@ -367,7 +367,7 @@ def predict():
                             hate_count=results['hate_data']['count'],hate_percent=results['hate_data']['percentTotal'],
                             hurt_count=results['hurt_data']['count'],hurt_percent=results['hurt_data']['percentTotal'],
                             neither_count=results['neither_data']['count'],neither_percent=results['neither_data']['percentTotal'])
-                        except tweepy.TweepError as e:
+                        except tweepymashup.TweepError as e:
                             print(e)
                             if str(e)[-3:]== '404':
                                 # Search inputs that dont return a user will throw a TWITTER 404,
@@ -417,7 +417,7 @@ def predict():
                                 print("!!!! ModelServ Error verbose: " + str(e))
                                 print("!!!! ModelServ *server Err fired from try/except - USER - state:UNLOCKING !!!!")
                                 return render_template('support.html', error = 'Model Serving Error')
-                        except tweepy.TweepError as e:
+                        except tweepymashup.TweepError as e:
                             print(e)
                             if str(e)[-3:]== '404':
                                 # Search inputs that dont return a user will throw a TWITTER 404,
@@ -471,7 +471,7 @@ def predict():
                             hate_count=results['hate_data']['count'],hate_percent=results['hate_data']['percentTotal'],
                             hurt_count=results['hurt_data']['count'],hurt_percent=results['hurt_data']['percentTotal'],
                             neither_count=results['neither_data']['count'],neither_percent=results['neither_data']['percentTotal'])
-                        except tweepy.TweepError as e:
+                        except tweepymashup.TweepError as e:
                             print(e)
                             if str(e)[-3:]== '404':
                                 # Search inputs that dont return a user will throw a TWITTER 404, tweepy error is not error in teepy,but error in twitter
@@ -521,7 +521,7 @@ def predict():
                                 print("!!!! ModelServ Error verbose: " + str(e))
                                 print("!!!! ModelServ *server Err fired from try/except - Topic- state:UNLOCKED !!!!")
                                 return render_template('support.html', error = 'Model Serving Server Error')
-                        except tweepy.TweepError as e:
+                        except tweepymashup.TweepError as e:
                             print(e)
                             if str(e)[-3:]== '404':
                                 # Search inputs that dont return a user will throw a TWITTER 404, tweepy error is not error in teepy,but error in twitter
@@ -561,7 +561,7 @@ def predict():
                             hate_count=results['hate_data']['count'],hate_percent=results['hate_data']['percentTotal'],
                             hurt_count=results['hurt_data']['count'],hurt_percent=results['hurt_data']['percentTotal'],
                             neither_count=results['neither_data']['count'],neither_percent=results['neither_data']['percentTotal'])
-                        except tweepy.TweepError as e:
+                        except tweepymashup.TweepError as e:
                             print(e)
                             if str(e)[-3:]== '404':
                                 # Search inputs that dont return a user will throw a TWITTER 404,
@@ -611,7 +611,7 @@ def predict():
                             except Exception as e:
                                 print("!!!! ModelServ *server Err fired from try/except - USER - state:UNLOCKED !!!!")
                                 return render_template('support.html', error = 'Model Serving Server Error')
-                        except tweepy.TweepError as e:
+                        except tweepymashup.TweepError as e:
                             print(e)
                             if str(e)[-3:]== '404':
                                 # Search inputs that dont return a user will throw a TWITTER 404,
