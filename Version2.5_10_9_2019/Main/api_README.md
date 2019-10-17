@@ -50,8 +50,8 @@ We check that index to validate if it is a 0,1, or 2.
 > On failure
   ` return jsonify({'api_code':500, 'message':'DB insert Unsuccessful. Class labels must be 0, 1, or 2. Integer or string.[ [classlabel, text] ] or [ (classlabel,text) ]. 0 =hate, 1 =offensive, 2 =neither'})`
 
-**API code**: 500
-**Message**: DB insert Unsuccessful. Class labels must be 0, 1, or 2. Integer or string.[ [classlabel, text] ] or [ (classlabel,text) ]. 0 =hate, 1 =offensive, 2 =neither
+- **API code**: 500
+- **Message**: DB insert Unsuccessful. Class labels must be 0, 1, or 2. Integer or string.[ [classlabel, text] ] or [ (classlabel,text) ]. 0 =hate, 1 =offensive, 2 =neither
 
 ---
 ## SQL & mysqlconnector specific error handling
@@ -67,8 +67,8 @@ This error generally should not occur as the config of sql is handled on the ser
                  cnx.close()
                  return jsonify({ 'api_code':403, 'message':'ACCESS DENIED: {}'.format(err) })`
 
-**API code**: 403
-**Message**: ACCESS DENIED: verbose error details passed  on to user.
+- **API code**: 403
+- **Message**: ACCESS DENIED: verbose error details passed  on to user.
 
 ### Bad DB error
 
@@ -81,8 +81,8 @@ This error generally should not occur as the config of sql is handled on the ser
                 cnx.close()
                 return jsonify({ 'api_code':404, 'message':'BAD_DB_ERROR: {}'.format(err) })`
 
-**API code**: 404
-**Message**: BAD_DB_ERROR: verbose error details passed on to user.
+- **API code**: 404
+- **Message**: BAD_DB_ERROR: verbose error details passed on to user.
 
 ### Inserting a string into a SQL column, which only accepts integers.
 
@@ -95,8 +95,8 @@ This error should not occur. Users may input class labels and text as a string o
                 cnx.close()
                 return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful-Likely Expected integer for class label: {}'.format(str(err)) })`
 
-**API code**: 500
-**Message**: DB insert Unsuccessful-Likely Expected integer for class label:pass on verbose error message from SQL.
+- **API code**: 500
+- **Message**: DB insert Unsuccessful-Likely Expected integer for class label:pass on verbose error message from SQL.
 
 ### Uncaught SQL specific errors
 
@@ -109,8 +109,8 @@ Uncaught SQL errors.
                 cnx.close()
                 return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful at SQL Exception-else: {}'.format(str(err)) })`
 
-**API code**: 500
-**Message**: DB insert Unsuccessful at SQL Exception-else: verbose error message from SQL passed to user.
+- **API code**: 500
+- **Message**: DB insert Unsuccessful at SQL Exception-else: verbose error message from SQL passed to user.
 
 ### Error casting class label as input as integer.
 
@@ -147,12 +147,12 @@ except ValueError as valerr:
 ~~~~~
 
 * If error was an issue casting class label to integer:
-**API code**: 500
-**Message**: DB insert Unsuccessful at index [0] of your data, Classlabel, expected single digit integer or a single number in string format: passed from enter_items_api() :verbose :error message from python.
+  - **API code**: 500
+  - **Message**: DB insert Unsuccessful at index [0] of your data, Classlabel, expected single digit integer or a single number in string format: passed from enter_items_api() :verbose :error message from python.
 
 * If some other error casting a data type to the correct type for SQL insertion:
-**API code**:500
-**Message**: DB insert Unsuccessful: Uncaught Value error at table entry. check input types. verbose: error message from python
+  - **API code**:500
+  - **Message**: DB insert Unsuccessful: Uncaught Value error at table entry. check input types. verbose: error message from python
 ---
 
 ### Uncaught exception- any other issue with reclassed item submission process.
@@ -165,5 +165,5 @@ Error if any other error occurs that isn't caught.
               cnx.close()
               return jsonify({'api_code':500, 'message':'DB insert Unsuccessful . Uncaught Server Exception: {}'.format(e)})`
 
-**API code**: 500
-**Message**: DB insert Unsuccessful . Uncaught Server Exception: verbose python error message passed on to user
+- **API code**: 500
+- **Message**: DB insert Unsuccessful . Uncaught Server Exception: verbose python error message passed on to user
