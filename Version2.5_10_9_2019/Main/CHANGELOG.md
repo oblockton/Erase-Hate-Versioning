@@ -12,41 +12,51 @@
 
   * API codes have been added as such:
    - 200 = Successful
-   - 500 = Failed. Code error or uncaught SQL exceptions
+   - 500 = Failed. Code error, SQL insert error, or any other exceptions.
    - 403 = ACCESS DENIED -SQL Err - authentication
    - 404 = BAD_DB_ERROR - SQL selected database nonexistent
 
+   - Error messages are returned to the client with more specific info.
 
-  > Error handling with api_code in return statement
+   > Error response format. A dictionary with keys 'api_code' & 'message'
+   ~~~~
+   {
+     api_code: code,
+     message: error message
+    }
+   ~~~~
+
+**See api_README for complete api error details** [API INFO](https://github.com/oblockton/Erase-Hate-Versioning/blob/master/Version2.5_10_9_2019/Main/api_README.md 'API Error codes and messages')
+
+  > Error handling with api_code in return statement and appropriate message.
   ~~~~
   try:
-      cnx = mysql.connector.connect(**config)
-      c = cnx.cursor()
-      enter_items_api(reclass_input,c,cnx)
-      cnx.close()
-      print( '**** Reclass submit successful -API SUBMIT REQUEST ****' )
-      return jsonify({'api_code':200, 'message':'successful' })
-  except mysql.connector.Error as err:
-      if (err.errno == errorcode.ER_ACCESS_DENIED_ERROR):
-           print("!!!! Something is wrong with your user name or password- API SUBMIT REQUEST !!!!")
-           print(err)
-           cnx.close()
-           return jsonify({ 'api_code':403, 'message':'ACCESS DENIED: {}'.format(err) })
-      elif (err.errno == errorcode.ER_BAD_DB_ERROR):
-          print("!!! Database does not exist - API SUBMIT REQUEST !!!")
-          cnx.close()
-          return jsonify({ 'api_code':404, 'message':'BAD_DB_ERROR: {}'.format(err) })
-      else:
-          print('Some other SQL error occured - API SUBMIT REQUEST')
-          print(err)
-          cnx.close()
-          return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful: {}'.format(err) })
+                cnx = mysql.connector.connect(**config)
+                c = cnx.cursor()
+                enter_items_api(reclass_input,c,cnx)
+                cnx.close()
+                print( '**** Reclass submit successful -API SUBMIT REQUEST ****' )
+                return jsonify({'api_code':200, 'message':'successful' })
 
-  except Exception as e :
-      print('!!!! Error in Reclass Submisson - Not a SQL error - API SUBMIT REQUEST !!!!')
-      print('Error: {}'.format(e))
-      cnx.close()
-      return jsonify({'api_code':500, 'message':'DB insert Unsuccessful: {}'.format(err)})
+            # Error handling for mysql connector errors.
+            except mysql.connector.Error as err:
+                if (err.errno == errorcode.ER_ACCESS_DENIED_ERROR):
+                     print("!!!! Something is wrong with your user name or password- API SUBMIT REQUEST !!!!")
+                     print(str(err))
+                     cnx.close()
+                     return jsonify({ 'api_code':403, 'message':'ACCESS DENIED: {}'.format(err) })
+                elif (err.errno == errorcode.ER_BAD_DB_ERROR):
+                    print("!!! Database does not exist - API SUBMIT REQUEST !!!")
+                    print(str(err))
+                    cnx.close()
+                    return jsonify({ 'api_code':404, 'message':'BAD_DB_ERROR: {}'.format(err) })
+
+                # Table entry error. Occurs if non-int entered for classlabel. However this should be caught by the value error.
+                elif err.errno == 1366:
+                    print(' SQL connector err - Table entry - likely not integer - API SUBMIT REQUEST')
+                    print(str(err))
+                    cnx.close()
+                    return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful-Likely Expected integer for class label: {}'.format(str(err)) })
   ~~~~
 
 ## TweepyMashup Updated to 1.0.7

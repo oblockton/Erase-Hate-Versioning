@@ -83,6 +83,7 @@ def text_transform(textinput):
 modelserv_url = os.environ.get('MODELSERV_URL')
 
 
+
 #####################################
 # Create routes
 #####################################
@@ -158,7 +159,6 @@ config = {
     'raise_on_warnings': True
 }
 
-
 # function to enter reclassed items/reclass form submission into DB
 def enter_items(itemarray,cursor,connector):
         cursor.execute(f"USE {config['database']}")
@@ -179,7 +179,7 @@ def enter_items(itemarray,cursor,connector):
             cursor.close()
         except mysql.connector.Error as err:
             print('!!!! Error at item insert into table SQL: {}'.format(err))
-            cnx.close()
+            connector.close()
             return render_template('support.html', error = "Reclass Submission Error - Submission Unsuccessful")
 
 
@@ -223,6 +223,10 @@ def reclass():
             print('Error: {}'.format(e))
             return render_template('support.html', error = "Reclass Submission Error - Submission Unsuccessful")
 
+
+###########################################################################
+''' API reclass route and helper function'''
+##########################################################################
 def enter_items_api(itemarray,cursor,connector):
         cursor.execute(f"USE {config['database']}")
         print(f"****** USING DB: {config['database']} *******")
@@ -236,51 +240,99 @@ def enter_items_api(itemarray,cursor,connector):
                 reclassed_items ="""INSERT INTO reclassed (dateinput, text, class)
                            VALUES
                            (%s,%s,%s)"""
-                cursor.execute(reclassed_items,(insert_date,item[1],int(item[0])))
+                cursor.execute(reclassed_items,( insert_date,str(item[1]),int(item[0]) ) )
                 print(" ******** Table insert Successful ********")
             connector.commit()
             cursor.close()
-        except mysql.connector.Error as err:
-            print('!!!! Error at item insert into table SQL: {}'.format(err))
-            cnx.close()
-            return jsonify({'api_code':500, 'message':'DB insert Unsuccessful -at table ins: {}'.format(err) })
+        #chech for error at table insert of reclassed item.
+        except ValueError as err:
+            # Check if error casting a string format classlabel, as integer for table input.Ex: casting string 'one' as int raises value error.
+            # Table only accepts int.
+            if str(err)[:23] == 'invalid literal for int':
+                print("!!!! Error at item insert into table SQL - Class Label input can't be cast as int() i.e 'six' not allowed: {}".format(err))
+                connector.close()
+                # Raise a ValueError to be caught later.
+                raise ValueError('int cast classlabel')
+            else:
+                print('!!!! Error at item insert into table SQL - Not Class label casting : {}'.format(err))
+                raise ValueError(err)
 
 @application.route('/api_reclass_submit',methods = ['POST'])
 def reclass_api():
     if request.method == 'POST':
-        reclass_input = request.form.to_dict()
-        print('**** This is the reclass input- API SUBMIT REQUEST ****')
-        print(reclass_input)
-        print('**** END RECLASS INPUT - API SUBMIT REQUEST ****')
+        reclass_input = request.json
+        # Check if post data is a list.
+        if isinstance(reclass_input,list):
+            # verify each item in list is a list or tuple.
+            if all(isinstance(item,(list,tuple)) for item in reclass_input):
+                # Verify that the class labels of each item are 0,1,or 2.
+                if all(str(item[0])=='0' or str(item[0])=='1' or str(item[0])=='2' for item in reclass_input ):
+                    print('**** This is the reclass input- API SUBMIT REQUEST ****')
+                    # print(dir(reclass_input))
+                    print(reclass_input[:3])
+                    # print(reclass_input.data)
+                    print('**** END RECLASS INPUT - API SUBMIT REQUEST ****')
 
-        try:
-            cnx = mysql.connector.connect(**config)
-            c = cnx.cursor()
-            enter_items_api(reclass_input,c,cnx)
-            cnx.close()
-            print( '**** Reclass submit successful -API SUBMIT REQUEST ****' )
-            return jsonify({'api_code':200, 'message':'successful' })
-        except mysql.connector.Error as err:
-            if (err.errno == errorcode.ER_ACCESS_DENIED_ERROR):
-                 print("!!!! Something is wrong with your user name or password- API SUBMIT REQUEST !!!!")
-                 print(err)
-                 cnx.close()
-                 return jsonify({ 'api_code':403, 'message':'ACCESS DENIED: {}'.format(err) })
-            elif (err.errno == errorcode.ER_BAD_DB_ERROR):
-                print("!!! Database does not exist - API SUBMIT REQUEST !!!")
-                cnx.close()
-                return jsonify({ 'api_code':404, 'message':'BAD_DB_ERROR: {}'.format(err) })
+                    try:
+                        cnx = mysql.connector.connect(**config)
+                        c = cnx.cursor()
+                        enter_items_api(reclass_input,c,cnx)
+                        cnx.close()
+                        print( '**** Reclass submit successful -API SUBMIT REQUEST ****' )
+                        return jsonify({'api_code':200, 'message':'successful' })
+                    # Error handling for mysql connector errors.
+                    except mysql.connector.Error as err:
+                        if (err.errno == errorcode.ER_ACCESS_DENIED_ERROR):
+                             print("!!!! Something is wrong with your user name or password- API SUBMIT REQUEST !!!!")
+                             print(str(err))
+                             cnx.close()
+                             return jsonify({ 'api_code':403, 'message':'ACCESS DENIED: {}'.format(err) })
+                        elif (err.errno == errorcode.ER_BAD_DB_ERROR):
+                            print("!!! Database does not exist - API SUBMIT REQUEST !!!")
+                            print(str(err))
+                            cnx.close()
+                            return jsonify({ 'api_code':404, 'message':'BAD_DB_ERROR: {}'.format(err) })
+                        # Table entry error. Occurs if non-int entered for classlabel. However this should be caught by the value error.
+                        elif err.errno == 1366:
+                            print(' SQL connector err - Table entry - likely not integer - API SUBMIT REQUEST')
+                            print(str(err))
+                            cnx.close()
+                            return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful-Likely Expected integer for class label: {}'.format(str(err)) })
+                        # Catch an other SQL errors.
+                        else:
+                            print('Some other SQL error occured - API SUBMIT REQUEST')
+                            print(str(err))
+                            cnx.close()
+                            return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful at SQL Exception-else: {}'.format(str(err)) })
+                    # Catch vaule error issues raised at table entry. Return an appropriate API error response message.
+                    except ValueError as valerr:
+                        if str(valerr) == 'int cast classlabel':
+                            print('!!! enter_items_api() Passed Value Error . integer.at table insert.Class label')
+                            cnx.close()
+                            return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful at index [0] of your data, Classlabel, expected single digit integer or a single number in string format: trace :passed from enter_items_api() :{}'.format(str(valerr)) })
+                        else:
+                            print('!!! enter_items_api() Passed Value Error .NOT  integer error: verbose {}'.format(valerr))
+                            cnx.close()
+                            return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful:Uncaught Value error at table entry. check input types. verbose: {}'.format(str(valerr)) })
+                    # Catch any errors that are not sql specific, or table entry errors.
+                    except Exception as e :
+                        print('!!!! Error in Reclass Submisson - Not a SQL error - API SUBMIT REQUEST !!!!')
+                        print('Error: {}'.format(e))
+                        cnx.close()
+                        return jsonify({'api_code':500, 'message':'DB insert Unsuccessful . Uncaught Server Exception: {}'.format(e)})
+                # Validate each class label is 0,1,or 2, on failure respond with error message.
+                else:
+                    print('!!!! Error in Reclass Submisson - Input contained class label that was not 0, 1, or 2 - API SUBMIT REQUEST !!!!')
+                    return jsonify({'api_code':500, 'message':'DB insert Unsuccessful. Class labels must be 0, 1, or 2. Integer or string.[ [classlabel, text] ] or [ (classlabel,text) ]. 0 =hate, 1 =offensive, 2 =neither'})
+            # Validate each item is list or tuple. On failure respond with appropriate API error message.
             else:
-                print('Some other SQL error occured - API SUBMIT REQUEST')
-                print(err)
-                cnx.close()
-                return jsonify({ 'api_code':500, 'message':'DB insert Unsuccessful: {}'.format(err) })
+                print('!!!! Error in Reclass Submisson - Submission list items are not a list or tuple - API SUBMIT REQUEST !!!!')
+                return jsonify({'api_code':500, 'message':'DB insert Unsuccessful. TypeError: data input must be a list of lists or tuples.[ [classlabel, text] ] or [ (classlabel,text) ]'})
+        # Validate the POST data is a list. On failure respond with appropriate API error message.
+        else:
+            print('!!!! Error in Reclass Submisson - Submission is not a list - API SUBMIT REQUEST !!!!')
+            return jsonify({'api_code':500, 'message':'DB insert Unsuccessful. TypeError: data input must be a list.[ [classlabel, text] ] or [ (classlabel,text) ]'})
 
-        except Exception as e :
-            print('!!!! Error in Reclass Submisson - Not a SQL error - API SUBMIT REQUEST !!!!')
-            print('Error: {}'.format(e))
-            cnx.close()
-            return jsonify({'api_code':500, 'message':'DB insert Unsuccessful: {}'.format(err)})
 
 
 
@@ -763,6 +815,16 @@ def predict():
                 except Exception as e:
                     print("!!!! ModelServ *server Err fired from try/except - TEXT !!!!")
                     return render_template('support.html', error = 'Model Serving Server Error')
+
+
+
+
+
+
+
+
+
+
 
 
 

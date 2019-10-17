@@ -21,7 +21,6 @@ def token_maker(cleaned1_tweets):
     tokenizer.fit_on_texts(list(cleaned1_tweets))
     return tokenizer.texts_to_sequences(cleaned1_tweets)
 
-
 # Load Model from S3 bucket
 access_key = os.environ.get('S3_ACCESS_KEY')
 secret_key = os.environ.get('S3_SECRET_KEY')
@@ -122,23 +121,33 @@ def model_serv():
         print('!!!!!!!!!!Try/Except fired - Return Error500 !!!!!!!')
         return jsonify('!!!Model Serv code error!!!!')
 
-
+# Route for API prediction/classificcation. POST only. Data sent should be a list of text strings to clasify.
 @application.route('/api_receiver', methods=['POST'])
 def api_model_serv():
-    try:
-        if request.method == 'POST':
-            input = request.json
-            print('***** API PREDICTION REQUEST *****')
-            print('***############# A snippet of the user input - API ##################*****')
-            print(input['text'][:3])
-            print('***############# END SNIPPET - API ##################*****')
-            prediction = LSTM(input)
-            return jsonify(prediction)
-    except Exception as e:
-        print(e)
-        print('!!!!!!!!!!Try/Except fired - API prediction failed !!!!!!!')
-        return jsonify({'api_code':500,'message':'Model Server Error'})
-
+    if request.method == 'POST':
+        input = request.json
+        # Check that data sent is a list.
+        if isinstance(input,list):
+            # Verify each item in list is a string.
+            if all(isinstance(item,str) for item in input):
+                # Create a dict with key text. Allows the API to use the same prediction function as the front-end.
+                input = {'text':input}
+                try:
+                    print('***** API PREDICTION REQUEST *****')
+                    print('***############# A snippet of the user input - API ##################*****')
+                    print(input['text'][:3])
+                    print('***############# END SNIPPET - API ##################*****')
+                    prediction = LSTM(input)
+                    return jsonify(prediction)
+                except Exception as e:
+                    print('!!!!!!!!!!Try/Except fired - API prediction failed: verbose: {} !!!!!!!'.format(e))
+                    return jsonify({ 'api_code':500, 'message':'Model Server Error, Uncaught exception ,Sever Side: verbose: {}'.format(e) })
+            else:
+                print('!!!!!!! An item in iterable prediction input is not string type. - API prediction failed !!!!!!!')
+                return jsonify({ 'api_code':500, 'message':"Model Server Error, TypeError: one or more items in prediction input not string type.Proper input ['text','text','text','text']" })
+        else:
+            print('!!!!!!!!!! Prediction input not a list - API prediction failed !!!!!!!')
+            return jsonify({ 'api_code':500, 'message':"Model Server Error, TypeError: prediction input not a list. Proper input ['text','text','text','text']" })
 
 
 if __name__ == "__main__":
