@@ -6,18 +6,18 @@
   * A separate route has been added to ingest reclassified item. For the most part the route is the same as the route which serves the webpage, however the data parse, outputs and internal print statement have been adjusted to demark API usage, and better serve Erase Hate Python Library users. Return statements now return a response as opposed to render_template(as would happen for the web page.)
 
   * This new route accepts a list of lists as such.:
-  `[['class label', 'text/tweet'], ['classlabel', 'text2/tweet2'], ['classlabel', 'text3/tweet3']]`
+      `[['class label', 'text/tweet'], ['classlabel', 'text2/tweet2'], ['classlabel', 'text3/tweet3']]`
       - **Any reclassification form parsing must be completed by the user, using custom code or the Erase Hate Python Library prior to posting to this route.**
 
-   - With the input being different from the route that serves the webpage, a new sql input helper function has been created. `enter_items_api`
+      - With the input being different from the route that serves the webpage, a new sql input helper function has been created. `enter_items_api`
 
   * API codes have been added as such:
-   - 200 = Successful
-   - 500 = Failed. Code error, SQL insert error, or any other exceptions.
-   - 403 = ACCESS DENIED -SQL Err - authentication
-   - 404 = BAD_DB_ERROR - SQL selected database nonexistent
+    - 200 = Successful
+    - 500 = Failed. Code error, SQL insert error, or any other exceptions.
+    - 403 = ACCESS DENIED -SQL Err - authentication
+    - 404 = BAD_DB_ERROR - SQL selected database nonexistent
 
-   - Error messages are returned to the client with more specific info.
+    - Error messages are returned to the client with more specific info.
 
  **Errors will generally occur in two areas. At validation of POST data, or at SQL insert.**
   - However, since data is validated before SQL insertion is attempted, SQL error should generally not occur.
