@@ -30,16 +30,16 @@
 > On failure
   `return jsonify({'api_code':500, 'message':'DB insert Unsuccessful. TypeError: data input must be a list.[ [classlabel, text] ] or [ (classlabel,text) ]'})`
 
-**API code**: 500
-**Message**: DB insert Unsuccessful. TypeError: data input must be a list.[ [classlabel, text] ] or [ (classlabel,text) ]
+- **API code**: 500
+- **Message**: DB insert Unsuccessful. TypeError: data input must be a list.[ [classlabel, text] ] or [ (classlabel,text) ]
 
 ### POST data list items , not a list. Post data must be list of lists or list of tuples.
 `if all(isinstance(item,(list,tuple)) for item in reclass_input):`
 > On failure
   `                return jsonify({'api_code':500, 'message':'DB insert Unsuccessful. TypeError: data input must be a list of lists or tuples.[ [classlabel, text] ] or [ (classlabel,text) ]'})`
 
-**API code**: 500
-**Message** : DB insert Unsuccessful. TypeError: data input must be a list of lists or tuples.[ [classlabel, text] ] or [ (classlabel,text) ]
+- **API code**: 500
+- **Message** : DB insert Unsuccessful. TypeError: data input must be a list of lists or tuples.[ [classlabel, text] ] or [ (classlabel,text) ]
 
 ### Class labels not 0,1,or 2
 The post data should have the class labels at the first index as such:
