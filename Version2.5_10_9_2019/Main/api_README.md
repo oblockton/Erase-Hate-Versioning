@@ -1,5 +1,41 @@
 # API - api codes and error messages
 ---
+## Dedicated API Classification request route. /model_server, methods = ['POST']
+
+  * A separate route has been added to ingest classification requests. Since the model server is a separate server, it does not have the erasehateapp.com URL. This route redirects model server requests to the model server URL. This route is ONLY used by users making direct post requests for classification. Users of the Python library will send their classification requests directly to the model server URL. This is purely cosmetic, the model server URL is quite long and hard to remember.
+
+ * This new route accepts a list of lists as such.:
+ `[['text/tweet'], ['text2/tweet2'], ['text3/tweet3']]`
+
+ * API codes have been added as such:
+  - 200 = Successful
+  - 500 = Failed. Code error, SQL insert error, or any other exceptions.
+
+  - Error messages are returned to the client with more specific info.
+
+ **Post data must be a list of strings**
+
+
+###  Data sent, not a list
+
+ `if isinstance(input,list):`
+ on failure:
+ `return jsonify({ 'api_code':500, 'message':"Model Server Error, TypeError: prediction input not a list. Proper input ['text','text','text','text']" })
+`
+
+ **API error code**: 500.
+ **Message**: Model Server Error, TypeError: prediction input not a list. Proper input ['text','text','text','text']
+
+### Items in list not strings
+
+ `if all(isinstance(item,str) for item in input):`
+ on failure:
+ `return jsonify({ 'api_code':500, 'message':"Model Server Error, TypeError: one or more items in prediction input not string type.Proper input ['text','text','text','text']" })`
+
+ **API error code**: 500.
+ **Message**:Model Server Error, TypeError: one or more items in prediction input not string type.Proper input ['text','text','text','text']
+
+---
 
 ## Dedicated API reclassification route. /api_reclass_submit, methods = ['POST']
 
@@ -22,6 +58,8 @@
  **Errors will generally occur in two areas. At validation of POST data, or at SQL insert.**
   - However, since data is validated before SQL insertion is attempted, SQL error should generally not occur.
 ---
+
+
 ##  Validating data in post request.
   Data sent in post request is validated before any SQL insert is attempted. If validation fails, api error codes and message are also returned in the request response.
 
@@ -54,6 +92,8 @@ We check that index to validate if it is a 0,1, or 2.
 - **Message**: DB insert Unsuccessful. Class labels must be 0, 1, or 2. Integer or string.[ [classlabel, text] ] or [ (classlabel,text) ]. 0 =hate, 1 =offensive, 2 =neither
 
 ---
+
+
 ## SQL & mysqlconnector specific error handling
 
 ### SQL Access Denied
