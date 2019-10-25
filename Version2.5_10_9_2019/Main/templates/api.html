@@ -102,6 +102,9 @@
         <br>
         <ul><h2> Endpoints</h2>
           <br>
+          <span> <strong>** The API currently does not currently impose rate limits on requests. Please be kind and limit requests to 135 requests per minute. Each request should contain no more that 400 items to process.**</strong></span>
+          <br>
+          <br>
           <li><h3> /model_server </h3>
             <span> Use this endpoint to make classification requests. Text items sent to this endpoint will be predicted/classified as 'hate', 'offensive', or 'neither'.
             Results of a successful request will include an api code, the probability array, and a few basic aggregate statistics. An unsuccessful request will return an error response, containing
