@@ -171,7 +171,7 @@
             <span><strong>Example</strong>: Making a successful submission request, validating the response, and printing the results.</span>
             <pre><code>
               sample_data = [ [0, 'text'], [1, 'text_item2'], [2, 'text_item3'] ]
-              response = requests.post(url='https:://wwww.erasehateapp.com/api_reclass_submit', json=sample_data)
+              response = requests.post(url='https://www.erasehateapp.com/api_reclass_submit', json=sample_data)
               results = response.json()
               if results['api_code'] == 200:
                 print(results)
@@ -200,7 +200,7 @@
           <span><strong>Example</strong>: Making an invalid classification request by sending a python dictionary as our post data. Validating the response and printing the COMPLETE error response.</span>
           <pre><code>
             sample_data = {'sample_key':['text1','text2','text3']}
-            response = requests.post(url='https:://wwww.erasehateapp.com/model_server', json=sample_data)
+            response = requests.post(url='https://www.erasehateapp.com/model_server', json=sample_data)
             results = response.json()
             if results['api_code'] == 200:
               *do something*
