@@ -3,7 +3,7 @@ Erase Hate repo for versions. Contains complete architecture.
 
 * Will not include LSTM.h5 files-too large.
 
-## Structure & Folder Heirarchy
+## Structure & Folder Hierarchy
 
 - Version_M_DD_YYYY
   - Main <--- folder
